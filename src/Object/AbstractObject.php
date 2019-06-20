@@ -8,7 +8,7 @@ use Mix\Bean\Injector;
 
 /**
  * Class AbstractObject
- * @package Mix\Core\Bean
+ * @package Mix\Bean\Object
  * @author liu,jian <coder.keda@gmail.com>
  */
 abstract class AbstractObject implements ObjectInterface

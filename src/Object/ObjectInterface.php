@@ -6,7 +6,7 @@ use Mix\Bean\Bean;
 
 /**
  * Interface ObjectInterface
- * @package Mix\Core\Bean
+ * @package Mix\Bean\Object
  * @author liu,jian <coder.keda@gmail.com>
  */
 interface ObjectInterface
