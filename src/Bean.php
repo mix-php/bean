@@ -2,7 +2,7 @@
 
 namespace Mix\Bean;
 
-use Mix\Core\Application;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Bean
@@ -13,9 +13,14 @@ class Bean
 {
 
     /**
-     * @var Application
+     * @var Beans
      */
-    public $app;
+    public $beans;
+
+    /**
+     * @var ContainerInterface
+     */
+    public $container;
 
     /**
      * @var array
@@ -23,13 +28,40 @@ class Bean
     public $config;
 
     /**
-     * Bean constructor.
+     * Beans constructor.
+     * @param $config
      */
-    public function __construct($app, $config)
+    public function __construct($config)
     {
         // 导入属性
-        $this->app    = $app;
-        $this->config = $config;
+        $this->beans     = $config['beans'];
+        $this->container = $config['container'];
+        $this->config    = $config['config'];
+    }
+
+    /**
+     * 获取Bean名称
+     * @param $class
+     * @return string
+     */
+    public static function name($class)
+    {
+        return base64_encode($class);
+    }
+
+    /**
+     * 获取名称
+     * @return string
+     */
+    public function getName()
+    {
+        $config = $this->config;
+        if (isset($config['name'])) {
+            $name = $config['name'];
+        } else {
+            $name = static::name($config['class']);
+        }
+        return $name;
     }
 
     /**
@@ -39,7 +71,19 @@ class Bean
     public function getClass()
     {
         $config = $this->config;
-        return $config['class'];
+        $class  = $config['class'];
+        return $class;
+    }
+
+    /**
+     * 获取属性
+     * @return array
+     */
+    public function getProperties()
+    {
+        $config     = $this->config;
+        $properties = $config['properties'] ?? [];
+        return $properties;
     }
 
     /**
@@ -48,10 +92,9 @@ class Bean
      */
     public function newInstance()
     {
-        $config     = $this->config;
-        $class      = $config['class'];
-        $properties = $config['properties'] ?? [];
-        $properties = Injector::build($this->app, $properties);
+        $class      = $this->getClass();
+        $properties = $this->getProperties();
+        $properties = Injector::build($this->beans, $this->container, $properties);
         return new $class($properties);
     }
 

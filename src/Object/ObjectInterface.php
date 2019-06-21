@@ -38,20 +38,5 @@ interface ObjectInterface
      * 析构事件
      */
     public function onDestruct();
-
-    /**
-     * 使用依赖创建实例
-     * @param Bean $bean
-     * @return ObjectInterface
-     */
-    public static function newInstance(Bean $bean);
-
-    /**
-     * 通过对象创建实例
-     * 为了实现类型的代码补全
-     * @param $object
-     * @return $this
-     */
-    public static function make($object);
-
+    
 }

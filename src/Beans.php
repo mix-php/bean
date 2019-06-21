@@ -3,7 +3,7 @@
 namespace Mix\Bean;
 
 use Mix\Bean\Exception\BeanException;
-use Mix\Core\Application;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Beans
@@ -14,9 +14,9 @@ class Beans
 {
 
     /**
-     * @var Application
+     * @var ContainerInterface
      */
-    public $app;
+    public $container;
 
     /**
      * Bean配置
@@ -25,43 +25,41 @@ class Beans
     public $config = [];
 
     /**
-     * Bean配置缓存
-     * @var array
+     * Bean数组
+     * @var Bean[]
      */
-    protected $_cache;
+    protected $_items = [];
 
     /**
      * Beans constructor.
+     * @param $config
      */
-    public function __construct($app, $config)
+    public function __construct($config)
     {
         // 导入属性
-        $this->app    = $app;
-        $this->config = $config;
-        // 初始化
-        $this->_cache = static::parse($config);
+        $this->container = $config['container'];
+        $this->config    = $config['config'];
+        // 构建
+        $this->build();
     }
 
     /**
-     * 解析配置
+     * 构建
      * @return array
      */
-    protected static function parse($config)
+    protected function build()
     {
-        // 解析并缓存配置
-        $cache = [];
-        foreach ($config as $item) {
-            if (!isset($item['class'])) {
-                continue;
-            }
-            if (isset($item['name'])) {
-                $name = $item['name'];
-            } else {
-                $name = self::name($item['class']);
-            }
-            $cache[$name] = $item;
+        $items = [];
+        foreach ($this->config as $item) {
+            $bean         = new Bean([
+                'beans'     => $this,
+                'container' => $this->container,
+                'config'    => $item,
+            ]);
+            $name         = $bean->getName();
+            $items[$name] = $bean;
         }
-        return $cache;
+        $this->_items = $items;
     }
 
     /**
@@ -71,23 +69,44 @@ class Beans
      */
     public function bean($beanName)
     {
-        if (!isset($this->_cache[$beanName])) {
+        if (!isset($this->_items[$beanName])) {
             if (self::isBase64($beanName)) {
                 $class = base64_decode($beanName);
             }
             throw new BeanException("Bean configuration not found: {$class}");
         }
-        return new Bean($this->app, $this->_cache[$beanName]);
+        return $this->_items[$beanName];
     }
 
     /**
-     * 获取Bean名称
-     * @param $class
-     * @return string
+     * 新增Bean
+     * @param Bean $bean
+     * @return bool
      */
-    public static function name($class)
+    public function append(Bean $bean)
     {
-        return base64_encode($class);
+        if (!is_object($bean->beans) || !static::compareObjects($bean->beans, $this)) {
+            $class = get_class($this);
+            throw new BeanException("Bean property 'beans' is not the '{$class}'");
+        }
+        if (!is_object($bean->container) || !static::compareObjects($bean->container, $this->container)) {
+            $class = get_class($this->container);
+            throw new BeanException("Bean property 'container' is not the '{$class}'");
+        }
+        $name                = $bean->getName();
+        $this->_items[$name] = $bean;
+        return true;
+    }
+
+    /**
+     * 对象比较
+     * @param $o1
+     * @param $o2
+     * @return bool
+     */
+    protected static function compareObjects(&$o1, &$o2)
+    {
+        return $o1 === $o2;
     }
 
     /**

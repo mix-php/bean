@@ -59,35 +59,4 @@ trait ObjectTrait
     {
     }
 
-    /**
-     * 使用依赖创建实例
-     * @param Bean $bean
-     * @return ObjectInterface
-     */
-    public static function newInstance(Bean $bean)
-    {
-        $current = get_called_class();
-        $class   = $bean->getClass();
-        if ($class != $current) {
-            throw new InstantiationException("Bean class is not equal to the current class, Current class: {$current}, Bean class: {$class}");
-        }
-        return $bean->newInstance();
-    }
-
-    /**
-     * 通过对象创建实例
-     * 为了实现类型的代码补全
-     * @param $object
-     * @return $this
-     */
-    public static function make($object)
-    {
-        $currentClass = get_called_class();
-        $class        = get_class($object);
-        if ($currentClass != $class) {
-            throw new InstantiationException("Type mismatch: Current class: {$currentClass}, Parameter class: {$class}");
-        }
-        return $object;
-    }
-
 }
