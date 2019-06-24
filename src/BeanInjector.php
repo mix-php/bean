@@ -3,23 +3,22 @@
 namespace Mix\Bean;
 
 use Mix\Bean\Exception\InjectException;
-use Psr\Container\ContainerInterface;
 
 /**
- * Class Injector
+ * Class BeanInjector
  * @package Mix\Bean
  * @author liu,jian <coder.keda@gmail.com>
  */
-class Injector
+class BeanInjector
 {
 
     /**
      * 构建
-     * @param Application $app
+     * @param BeanFactory $beanFactory
      * @param array $config
      * @return array
      */
-    public static function build(Beans $beans, ContainerInterface $container, array $config)
+    public static function build(BeanFactory $beanFactory, array $config)
     {
         foreach ($config as $key => $value) {
             // 子类处理
@@ -28,23 +27,18 @@ class Injector
                     // 非关联数组
                     foreach ($value as $subNumberKey => $subValue) {
                         if (isset($subValue['ref'])) {
-                            $config[$key][$subNumberKey] = static::build($beans, $container, $subValue);
+                            $config[$key][$subNumberKey] = static::build($beanFactory, $subValue);
                         }
                     }
                 } else {
                     // 引用依赖
                     if (isset($value['ref'])) {
-                        $config[$key] = static::build($beans, $container, $value);
-                    }
-                    // 组件
-                    if (isset($value['component'])) {
-                        $name         = $value['component'];
-                        $config[$key] = $container->get($name);
+                        $config[$key] = static::build($beanFactory, $value);
                     }
                 }
             } elseif ($key === 'ref') {
-                // 实例化
-                return $beans->bean($config['ref'])->newInstance();
+                // 引用依赖实例化
+                return $beanFactory->getBean($config['ref']);
             }
         }
         return $config;
@@ -52,12 +46,12 @@ class Injector
 
     /**
      * 注入属性
-     * @param ObjectInterface $object
+     * @param $object
      * @param array $properties
      * @return ObjectInterface
      * @throws \ReflectionException
      */
-    public static function inject(ObjectInterface $object, array $properties)
+    public static function inject($object, array $properties)
     {
         foreach ($properties as $name => $value) {
             // 导入

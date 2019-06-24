@@ -3,10 +3,10 @@
 namespace Mix\Bean\Exception;
 
 /**
- * Class InstantiationException
+ * Class ScopeException
  * @package Mix\Exception
  * @author liu,jian <coder.keda@gmail.com>
  */
-class InstantiationException extends \RuntimeException
+class ScopeException extends \RuntimeException
 {
 }
