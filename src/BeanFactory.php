@@ -37,8 +37,7 @@ class BeanFactory
     public function __construct(array $config)
     {
         // 导入属性
-        $this->container = $config['container'];
-        $this->config    = $config['config'];
+        $this->config = $config['config'];
         // 构建
         $this->build();
     }
@@ -49,16 +48,16 @@ class BeanFactory
      */
     protected function build()
     {
-        $items = [];
+        $definitions = [];
         foreach ($this->config as $item) {
-            $bean         = new BeanDefinition([
+            $bean               = new BeanDefinition([
                 'beanFactory' => $this,
                 'config'      => $item,
             ]);
-            $name         = $bean->getName();
-            $items[$name] = $bean;
+            $name               = $bean->getName();
+            $definitions[$name] = $bean;
         }
-        $this->_items = $items;
+        $this->_definitions = $definitions;
     }
 
     /**
@@ -68,10 +67,10 @@ class BeanFactory
      */
     public function getBeanDefinition(string $beanName)
     {
-        if (!isset($this->_items[$beanName])) {
+        if (!isset($this->_definitions[$beanName])) {
             throw new BeanException("Bean configuration not found: {$beanName}");
         }
-        return $this->_items[$beanName];
+        return $this->_definitions[$beanName];
     }
 
     /**
@@ -93,8 +92,7 @@ class BeanFactory
             return $object;
         }
         // prototype
-        $object = $beanDefinition->newInstance($config);
-        return $object;
+        return $beanDefinition->newInstance($config);
     }
 
     /**
