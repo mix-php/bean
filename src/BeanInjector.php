@@ -65,6 +65,8 @@ class BeanInjector
             $reader        = new PhpDocReader();
             $propertyClass = $reader->getPropertyClass($property);
             if (!$propertyClass) {
+                // 导入
+                $object->$name = $value;
                 continue;
             }
             if (substr($propertyClass, -2) === '[]') {
