@@ -17,7 +17,7 @@
   ],
   "require": {
     "php": ">=7.0.0",
-    "php-di/phpdoc-reader": "~2.0"
+    "php-di/phpdoc-reader": "~2.1"
   },
   "autoload": {
     "psr-4": {
