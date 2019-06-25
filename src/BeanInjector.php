@@ -18,7 +18,7 @@ class BeanInjector
      * @param array $config
      * @return array
      */
-    public static function build(BeanFactory $beanFactory, array $config)
+    public static function build(BeanFactory $beanFactory, array $config): array
     {
         foreach ($config as $key => $value) {
             // 子类处理
@@ -48,7 +48,7 @@ class BeanInjector
      * 注入属性
      * @param $object
      * @param array $properties
-     * @return ObjectInterface
+     * @return mixed
      * @throws \ReflectionException
      */
     public static function inject($object, array $properties)

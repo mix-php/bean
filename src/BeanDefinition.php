@@ -43,7 +43,7 @@ class BeanDefinition
      * 初始化后执行指定方法
      * @return string
      */
-    public function getInitMethod()
+    public function getInitMethod(): string
     {
         $config = $this->config;
         if (isset($config['initMethod'])) {
@@ -56,7 +56,7 @@ class BeanDefinition
      * 获取名称
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         $config = $this->config;
         if (isset($config['name'])) {
@@ -69,7 +69,7 @@ class BeanDefinition
      * 获取类名
      * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         $config = $this->config;
         $class  = $config['class'];
@@ -80,7 +80,7 @@ class BeanDefinition
      * 获取作用域
      * @return string
      */
-    public function getScope()
+    public function getScope(): string
     {
         $config = $this->config;
         if (isset($config['scope'])) {
@@ -97,7 +97,7 @@ class BeanDefinition
      * 获取属性
      * @return array
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         $config     = $this->config;
         $properties = $config['properties'] ?? [];
@@ -108,7 +108,7 @@ class BeanDefinition
      * 获取构造参数
      * @return array
      */
-    public function getConstructorArgs()
+    public function getConstructorArgs(): array
     {
         $config     = $this->config;
         $properties = $config['constructorArgs'] ?? [];
@@ -127,12 +127,13 @@ class BeanDefinition
         $constructorArgs = $this->getConstructorArgs();
         $initMethod      = $this->getInitMethod();
         if ($properties) {
-            $properties = array_merge($properties, $config);
+            $properties = $config + $properties;
             $properties = BeanInjector::build($this->beanFactory, $properties);
             $object     = new $class();
             BeanInjector::inject($object, $properties);
         } elseif ($constructorArgs) {
-            $constructorArgs = array_merge($constructorArgs, $config);
+            $constructorArgs = $config + $constructorArgs;
+            $constructorArgs = BeanInjector::build($this->beanFactory, $constructorArgs);
             $object          = new $class(...$constructorArgs);
         } else {
             $object = new $class();

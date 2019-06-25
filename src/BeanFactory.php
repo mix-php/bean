@@ -44,9 +44,8 @@ class BeanFactory
 
     /**
      * 构建
-     * @return array
      */
-    protected function build()
+    protected function build(): void
     {
         $definitions = [];
         foreach ($this->config as $item) {
@@ -65,19 +64,19 @@ class BeanFactory
      * @param $beanName
      * @return BeanDefinition
      */
-    public function getBeanDefinition(string $beanName)
+    public function getBeanDefinition(string $beanName): BeanDefinition
     {
         if (!isset($this->_definitions[$beanName])) {
-            throw new BeanException("Bean configuration not found: {$beanName}");
+            throw new BeanException("Bean definition not found: {$beanName}");
         }
         return $this->_definitions[$beanName];
     }
 
     /**
      * 获取Bean
-     * @param $beanName
+     * @param string $beanName
      * @param array $config
-     * @return object
+     * @return mixed
      */
     public function getBean(string $beanName, array $config = [])
     {
@@ -100,7 +99,7 @@ class BeanFactory
      * @param BeanDefinition $beanDefinition
      * @return bool
      */
-    public function registerBeanDefinition(BeanDefinition $beanDefinition)
+    public function registerBeanDefinition(BeanDefinition $beanDefinition): bool
     {
         $name                      = $beanDefinition->getName();
         $this->_definitions[$name] = $beanDefinition;
