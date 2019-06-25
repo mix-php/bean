@@ -9,7 +9,7 @@ use Mix\Bean\Exception\BeanException;
  * @package Mix\Bean
  * @author liu,jian <coder.keda@gmail.com>
  */
-class BeanFactory
+Trait BeanFactoryTrait
 {
 
     /**
@@ -31,21 +31,9 @@ class BeanFactory
     protected $_objects = [];
 
     /**
-     * Beans constructor.
-     * @param $config
+     * 初始化
      */
-    public function __construct(array $config)
-    {
-        // 导入属性
-        $this->config = $config['config'];
-        // 构建
-        $this->build();
-    }
-
-    /**
-     * 构建
-     */
-    protected function build(): void
+    public function init()
     {
         $definitions = [];
         foreach ($this->config as $item) {
@@ -92,18 +80,6 @@ class BeanFactory
         }
         // prototype
         return $beanDefinition->newInstance($config);
-    }
-
-    /**
-     * 注册BeanDefinition
-     * @param BeanDefinition $beanDefinition
-     * @return bool
-     */
-    public function registerBeanDefinition(BeanDefinition $beanDefinition): bool
-    {
-        $name                      = $beanDefinition->getName();
-        $this->_definitions[$name] = $beanDefinition;
-        return true;
     }
 
 }

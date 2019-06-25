@@ -2,7 +2,7 @@
 
 namespace Mix\Bean;
 
-use Mix\Bean\Exception\BeanException;
+use Mix\Bean\Exception\ScopeException;
 
 /**
  * Class BeanDefinition
@@ -32,11 +32,11 @@ class BeanDefinition
      * Beans constructor.
      * @param $config
      */
-    public function __construct(array $config)
+    public function __construct(BeanFactory $beanFactory, array $config)
     {
         // 导入属性
-        $this->beanFactory = $config['beanFactory'];
-        $this->config      = $config['config'];
+        $this->beanFactory = $beanFactory;
+        $this->config      = $config;
     }
 
     /**
@@ -131,11 +131,13 @@ class BeanDefinition
             $properties = BeanInjector::build($this->beanFactory, $properties);
             $object     = new $class();
             BeanInjector::inject($object, $properties);
-        } elseif ($constructorArgs) {
+        }
+        if ($constructorArgs) {
             $constructorArgs = $config + $constructorArgs;
             $constructorArgs = BeanInjector::build($this->beanFactory, $constructorArgs);
             $object          = new $class(...$constructorArgs);
-        } else {
+        }
+        if (!$properties && !$constructorArgs) {
             $object = new $class();
         }
         $initMethod and call_user_func($object, $initMethod);
