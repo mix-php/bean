@@ -126,18 +126,19 @@ class BeanDefinition
         $properties      = $this->getProperties();
         $constructorArgs = $this->getConstructorArgs();
         $initMethod      = $this->getInitMethod();
-        if ($properties) {
-            $properties = $config + $properties;
-            $properties = BeanInjector::build($this->beanFactory, $properties);
-            $object     = new $class();
-            BeanInjector::inject($object, $properties);
-        }
+        $object          = null;
         if ($constructorArgs) {
             $constructorArgs = $config + $constructorArgs;
             $constructorArgs = BeanInjector::build($this->beanFactory, $constructorArgs);
             $object          = new $class(...$constructorArgs);
         }
-        if (!$properties && !$constructorArgs) {
+        if ($properties) {
+            $properties = $config + $properties;
+            $properties = BeanInjector::build($this->beanFactory, $properties);
+            $object or $object = new $class();
+            BeanInjector::inject($object, $properties);
+        }
+        if (!$object) {
             $object = new $class();
         }
         $initMethod and call_user_func($object, $initMethod);
