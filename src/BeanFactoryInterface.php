@@ -26,7 +26,7 @@ interface BeanFactoryInterface
      * 获取Bean
      * @param string $beanName
      * @param array $config
-     * @return mixed
+     * @return object
      */
     public function getBean(string $beanName, array $config = []);
 

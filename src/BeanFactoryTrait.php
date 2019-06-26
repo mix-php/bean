@@ -36,13 +36,10 @@ Trait BeanFactoryTrait
     public function init()
     {
         $definitions = [];
-        foreach ($this->config as $item) {
-            $bean               = new BeanDefinition([
-                'beanFactory' => $this,
-                'config'      => $item,
-            ]);
-            $name               = $bean->getName();
-            $definitions[$name] = $bean;
+        foreach ($this->config as $config) {
+            $definition         = new BeanDefinition($this, $config);
+            $name               = $definition->getName();
+            $definitions[$name] = $definition;
         }
         $this->_definitions = $definitions;
     }
@@ -64,7 +61,7 @@ Trait BeanFactoryTrait
      * 获取Bean
      * @param string $beanName
      * @param array $config
-     * @return mixed
+     * @return object
      */
     public function getBean(string $beanName, array $config = [])
     {

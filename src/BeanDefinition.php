@@ -19,7 +19,7 @@ class BeanDefinition
     const SINGLETON = 'singleton';
 
     /**
-     * @var BeanFactory
+     * @var BeanFactoryInterface
      */
     public $beanFactory;
 
@@ -29,10 +29,11 @@ class BeanDefinition
     public $config;
 
     /**
-     * Beans constructor.
-     * @param $config
+     * BeanDefinition constructor.
+     * @param BeanFactoryInterface $beanFactory
+     * @param array $config
      */
-    public function __construct(BeanFactory $beanFactory, array $config)
+    public function __construct(BeanFactoryInterface $beanFactory, array $config)
     {
         // 导入属性
         $this->beanFactory = $beanFactory;
@@ -110,15 +111,15 @@ class BeanDefinition
      */
     public function getConstructorArgs(): array
     {
-        $config     = $this->config;
-        $properties = $config['constructorArgs'] ?? [];
-        return $properties;
+        $config = $this->config;
+        $args   = $config['constructorArgs'] ?? [];
+        return $args;
     }
 
     /**
      * 创建实例
      * @param $config
-     * @return mixed
+     * @return object
      */
     public function newInstance(array $config)
     {
@@ -129,8 +130,11 @@ class BeanDefinition
         $object          = null;
         if ($constructorArgs) {
             $constructorArgs = $config + $constructorArgs;
-            $constructorArgs = BeanInjector::build($this->beanFactory, $constructorArgs);
-            $object          = new $class(...$constructorArgs);
+            // 支持构造参数中的数组参数中的ref的依赖引用
+            foreach ($constructorArgs as $key => $arg) {
+                $constructorArgs[$key] = BeanInjector::build($this->beanFactory, $arg);
+            }
+            $object = new $class(...$constructorArgs);
         }
         if ($properties) {
             $properties = $config + $properties;

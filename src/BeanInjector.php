@@ -14,11 +14,11 @@ class BeanInjector
 
     /**
      * 构建
-     * @param BeanFactory $beanFactory
+     * @param BeanFactoryInterface $beanFactory
      * @param array $config
      * @return array
      */
-    public static function build(BeanFactory $beanFactory, array $config): array
+    public static function build(BeanFactoryInterface $beanFactory, array $config)
     {
         foreach ($config as $key => $value) {
             // 子类处理
@@ -73,12 +73,13 @@ class BeanInjector
                 // 当前的doc标注里面这是一个数组，去掉数组的尾巴
                 $propertyClass = substr($propertyClass, 0, -2);
                 // 这时候当前的$value已经是个被依赖注入自动维护的实例数组了 不需要特殊处理
+                $values = $value;
             } else {
                 // 不是数组，弄成临时数组 方便下面遍历检查
                 $values = [$value];
             }
-            foreach ($values as $v) {
-                if (!($v instanceof $propertyClass)) {
+            foreach ($values as $val) {
+                if (!($val instanceof $propertyClass)) {
                     throw new InjectException("The type of the imported property does not match, class: {$class}, property: {$name}, @var: {$propertyClass}");
                 }
             }
