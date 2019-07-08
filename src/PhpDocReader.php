@@ -86,21 +86,22 @@ class PhpDocReader
             return null;
         }
 
-        // Ignore primitive types
-        if (in_array($type, $this->ignoredTypes)) {
-            return null;
-        }
-
         // Ignore types containing special characters ([], <> ...)
         if (!preg_match('/^[a-zA-Z0-9\\\\_\[\]]+$/', $type)) {
             return null;
         }
 
         // Add array support
-        $isArray = false;
-        if (substr($type, -2) === '[]') {
-            $isArray = true;
-            $type    = substr($type, 0, -2);
+        $symbol = '';
+        $start  = strpos($type, '[');
+        if ($start !== false) {
+            $symbol = substr($type, $start);
+            $type   = substr($type, 0, $start);
+        }
+
+        // Ignore primitive types
+        if (in_array($type, $this->ignoredTypes)) {
+            return null;
         }
 
         $class = $property->getDeclaringClass();
@@ -136,7 +137,7 @@ class PhpDocReader
         $type = ltrim($type, '\\');
 
         // Add array support
-        return $isArray ? "{$type}[]" : $type;
+        return $symbol ? "{$type}{$symbol}" : $type;
     }
 
     /**

@@ -69,9 +69,10 @@ class BeanInjector
                 $object->$name = $value;
                 continue;
             }
-            if (substr($propertyClass, -2) === '[]') {
+            $start = strpos($propertyClass, '[');
+            if ($start !== false) {
                 // 当前的doc标注里面这是一个数组，去掉数组的尾巴
-                $propertyClass = substr($propertyClass, 0, -2);
+                $propertyClass = substr($propertyClass, 0, $start);
                 // 这时候当前的$value已经是个被依赖注入自动维护的实例数组了 不需要特殊处理
                 $values = $value;
             } else {
