@@ -123,13 +123,24 @@ class BeanDefinition
      */
     public function newInstance(array $config)
     {
+        // 配置分类
+        $coverConstructorArgs = [];
+        $coverProperties      = [];
+        foreach ($config as $key => $value) {
+            if (is_numeric($key)) {
+                $coverConstructorArgs[$key] = $value;
+            } else {
+                $coverProperties[$key] = $value;
+            }
+        }
+        // 创建实例
         $class           = $this->getClass();
         $properties      = $this->getProperties();
         $constructorArgs = $this->getConstructorArgs();
         $initMethod      = $this->getInitMethod();
         $object          = null;
         if ($constructorArgs) {
-            $constructorArgs = $config + $constructorArgs;
+            $constructorArgs = $coverConstructorArgs + $constructorArgs;
             // 支持构造参数中的数组参数中的ref的依赖引用
             foreach ($constructorArgs as $key => $arg) {
                 $constructorArgs[$key] = BeanInjector::build($this->beanFactory, $arg);
@@ -137,7 +148,7 @@ class BeanDefinition
             $object = new $class(...$constructorArgs);
         }
         if ($properties) {
-            $properties = $config + $properties;
+            $properties = $coverProperties + $properties;
             $properties = BeanInjector::build($this->beanFactory, $properties);
             $object or $object = new $class();
             BeanInjector::inject($object, $properties);
