@@ -159,7 +159,7 @@ class BeanDefinition
         if (!$object) {
             $object = new $class();
         }
-        $initMethod and call_user_func($object, $initMethod);
+        $initMethod and call_user_func([$object, $initMethod]);
         return $object;
     }
 
