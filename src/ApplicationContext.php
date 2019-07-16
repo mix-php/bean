@@ -31,7 +31,7 @@ class ApplicationContext implements BeanFactoryInterface, ContainerInterface
      * @param string $beanName
      * @return object
      */
-    public function get(string $beanName)
+    public function get($beanName)
     {
         return $this->getBean($beanName);
     }
@@ -41,7 +41,7 @@ class ApplicationContext implements BeanFactoryInterface, ContainerInterface
      * @param string $beanName
      * @return bool
      */
-    public function has(string $beanName)
+    public function has($beanName)
     {
         $beanDefinition = null;
         try {
