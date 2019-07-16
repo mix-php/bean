@@ -2,12 +2,14 @@
 
 namespace Mix\Bean;
 
+use Psr\Container\ContainerInterface;
+
 /**
  * Class ApplicationContext
  * @package Mix\Bean
  * @author liu,jian <coder.keda@gmail.com>
  */
-class ApplicationContext implements BeanFactoryInterface
+class ApplicationContext implements BeanFactoryInterface, ContainerInterface
 {
 
     use BeanFactoryTrait;
@@ -22,6 +24,31 @@ class ApplicationContext implements BeanFactoryInterface
         $this->config = $config;
         // 初始化
         $this->init();
+    }
+
+    /**
+     * 获取Bean
+     * @param string $beanName
+     * @return object
+     */
+    public function get(string $beanName)
+    {
+        return $this->getBean($beanName);
+    }
+
+    /**
+     * 判断Bean是否存在
+     * @param string $beanName
+     * @return bool
+     */
+    public function has(string $beanName)
+    {
+        $beanDefinition = null;
+        try {
+            $beanDefinition = $this->getBeanDefinition($beanName);
+        } catch (\Throwable $e) {
+        }
+        return $beanDefinition ? true : false;
     }
 
 }
