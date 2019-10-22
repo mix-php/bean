@@ -16,7 +16,7 @@ class BeanInjector
      * 构建
      * @param BeanFactoryInterface $beanFactory
      * @param array $config
-     * @return array
+     * @return array|object
      */
     public static function build(BeanFactoryInterface $beanFactory, array $config)
     {
