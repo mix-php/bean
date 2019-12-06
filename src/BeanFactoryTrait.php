@@ -2,7 +2,7 @@
 
 namespace Mix\Bean;
 
-use Mix\Bean\Exception\BeanException;
+use Mix\Bean\Exception\NotFoundException;
 
 /**
  * Class BeanFactory
@@ -52,7 +52,7 @@ Trait BeanFactoryTrait
     public function getBeanDefinition(string $beanName): BeanDefinition
     {
         if (!isset($this->_definitions[$beanName])) {
-            throw new BeanException("Bean definition not found: {$beanName}");
+            throw new NotFoundException("Bean definition not found: {$beanName}");
         }
         return $this->_definitions[$beanName];
     }

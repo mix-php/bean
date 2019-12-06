@@ -3,10 +3,10 @@
 namespace Mix\Bean\Exception;
 
 /**
- * Class BeanException
+ * Class NotFoundException
  * @package Mix\Exception
  * @author liu,jian <coder.keda@gmail.com>
  */
-class BeanException extends \RuntimeException
+class NotFoundException extends \RuntimeException
 {
 }
