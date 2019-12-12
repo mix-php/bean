@@ -59,7 +59,7 @@ class BeanInjector
             $class      = get_class($object);
             $reflection = new \ReflectionClass($class);
             if (!$reflection->hasProperty($name)) {
-                continue;
+                throw new InjectException(sprintf('Undefined property: %s::$%s', $class, $name));
             }
             $property      = $reflection->getProperty($name);
             $reader        = new PhpDocReader();
