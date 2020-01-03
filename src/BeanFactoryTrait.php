@@ -45,6 +45,21 @@ Trait BeanFactoryTrait
     }
 
     /**
+     * 装载
+     * 实例化所有单例 (Scope == SINGLETON)
+     * 解决 BeanInjector 使用了 PhpDocReader 获取注释类型时使用了 file 操作，会导致 SWOOLE_HOOK_FILE 切换协程，使单例失效
+     * 该方法必须在执行任何业务逻辑前执行
+     */
+    public function load()
+    {
+        foreach ($this->_definitions as $definition) {
+            if ($definition->getScope() == BeanDefinition::SINGLETON) {
+                $this->get($definition->getName());
+            }
+        }
+    }
+
+    /**
      * 获取BeanDefinition
      * @param $beanName
      * @return BeanDefinition
