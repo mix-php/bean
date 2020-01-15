@@ -31,7 +31,10 @@ class FileSystemApplicationContext extends ApplicationContext
             $dir = $path;
         }
         $config = [];
-        $dh     = opendir($dir);
+        $dh     = @opendir($dir);
+        if (!$dh) {
+            throw new \RuntimeException(sprintf('Invalid path: %s', $path));
+        }
         while (false !== ($file = readdir($dh))) {
             if (($file != '.') && ($file != '..')) {
                 $full = $dir . '/' . $file;
